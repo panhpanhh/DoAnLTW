@@ -13,6 +13,7 @@ namespace DoAnLTW.Controllers
     {
         //
         // GET: /Home/
+        // hello
 
         QL_TX data = new QL_TX();
         public ActionResult LoaiSP()
