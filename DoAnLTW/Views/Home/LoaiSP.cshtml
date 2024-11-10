@@ -1,0 +1,337 @@
+﻿@model IEnumerable<DoAnLTW.Models.Loai>
+
+@{
+    ViewBag.Title = "LoaiSP";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<h2>Danh sách sản phẩm</h2>
+
+<section style="display: flex; min-height: 80vh; align-items: center; justify-content: center; background-color: transparent; padding: 20px; margin-top: 20px; position: relative;">
+    <div class="container" style="width: 100%; max-width: 1600px; gap: 5px; display: flex; justify-content: center; flex-wrap: wrap; position: absolute; padding: 20px;">
+        @foreach (var s in Model)
+        {
+            <div class="category" style="width: calc(25% - 20px); height: 400px; margin: 10px; position: relative;">
+                <div class="background" style="width: 100%; height: 100%; position: relative;">
+                    <img src="@Url.Content("~/Content/pic/category/" + s.AnhBia)" alt="Category Image" style="width: 100%; height: 100%; object-fit: cover; border-radius: 20px; filter: brightness(0.9); transition: transform 0.7s ease;">
+                    <div class="content" style="position: absolute; bottom: 10px; left: 10px; color: #fff; z-index: 1;">
+                        <div class="title">
+                            @s.TenLoai
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <button id="left" class="button left"><i class="fa fa-chevron-left"></i></button>
+    <button id="right" class="button right"><i class="fa fa-chevron-right"></i></button>
+</section>
+
+<style>
+    .button {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background-color: rgba(252, 242, 242, 0.7);
+        border: none;
+        padding: 15px;
+        cursor: pointer;
+        border-radius: 5px;
+        z-index: 100;
+        opacity: 1;
+        display: block;
+    }
+
+    .left {
+        left: 20px;
+        z-index: 10;
+    }
+
+    .right {
+        right: 20px;
+        z-index: 10;
+    }
+
+    #left, #right {
+        opacity: 0;
+        width: 50px;
+        height: 50px;
+        border: none;
+        border-radius: 50%;
+        padding: 10px;
+        text-align: center;
+        opacity: 1;
+        z-index: 10;
+        transition: opacity 0.5s, transform 0.3s;
+    }
+
+    #left {
+        position: absolute;
+        top: 50%;
+        left: 30px;
+        transform: translateY(-50%);
+    }
+
+    #right {
+        position: absolute;
+        top: 50%;
+        right: 30px;
+        transform: translateY(-50%);
+    }
+
+        #left i, #right i {
+            font-size: 25px;
+            color: var(--color-text);
+        }
+
+        #left:hover, #right:hover {
+            background-color: var(--Hover-icon);
+            cursor: pointer;
+            transition: background-color 0.4s;
+        }
+
+            #left:hover i, #right:hover i {
+                color: rgb(255, 255, 255);
+            }
+
+        #left:active i, #right:active i {
+            font-size: 20px;
+        }
+
+    .container {
+        display: flex;
+        flex-wrap: wrap; /* Allow categories to wrap to next row */
+        justify-content: space-between; /* Space out categories evenly */
+        gap: 20px; /* Reduced gap between categories */
+        opacity: 0;
+        transition: opacity 0.5s ease-in-out;
+    }
+
+    .category::before {
+        content: "";
+        display: block;
+        padding: 1px;
+    }
+
+    .category .background {
+        transform: scale(1.15) translateZ(0);
+        background-size: 400px;
+        transition: transform 0.7s ease;
+    }
+
+    .container:hover > .category:not(:hover) .background,
+    .container:hover > .category:not(:hover) .title {
+        filter: brightness(0.5) saturate(0) contrast(1.2) blur(20px);
+    }
+
+    .category.active {
+        opacity: 1;
+        transform: translateZ(0);
+    }
+
+    .container.active {
+        opacity: 1;
+        display: flex;
+    }
+
+    .container:not(:active) {
+        transform: translateZ(-100%);
+        opacity: 0;
+    }
+
+    .category {
+        width: calc(25% - 20px);
+        height: 180px;
+        transition: transform 0.7s ease, box-shadow 0.7s ease;
+    }
+
+        .category:hover {
+            transform: scale(1.05);
+        }
+
+    @@media (max-width: 1024px) {
+        .category {
+            width: calc(50% - 20px);
+            height: 150px;
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .category {
+            width: calc(100% - 20px);
+            height: 120px;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        let currentCategoryIndex = 0;
+        const container = document.querySelector('.container');
+        const items = document.querySelectorAll('.category');
+        const itemsPerPage = 4;
+
+        function showCategory(index) {
+            container.classList.add('active');
+            container.style.display = 'flex';
+            setTimeout(() => { container.style.opacity = '1'; }, 50);
+        }
+
+        function nextCategory() { showCategory((currentCategoryIndex + 1) % 1); }
+        function prevCategory() { showCategory((currentCategoryIndex - 1 + 1) % 1); }
+
+        setInterval(nextCategory, 8000);
+
+        document.getElementById("left").addEventListener("click", prevCategory);
+        document.getElementById("right").addEventListener("click", nextCategory);
+
+        showCategory(currentCategoryIndex);
+    });
+</script>
+
+
+@*<section style="margin-left: -100px; display: flex; min-height: 80vh; align-items: center; justify-content: center; background-color: transparent; padding: 20px; position: relative;">
+        <div class="container" id="productContainer" style="margin-left: 80px; padding: 20px; z-index: 1; transform: translateZ(0); transition: opacity 0.8s ease-in-out, transform 0.5s ease; opacity: 1; gap: 5px; display: flex; justify-content: center; flex-wrap: wrap; position: absolute;">
+            @foreach (var loai in Model)
+            {
+                <div class="product-item" style="width: 260px; height: 260px; margin: 5px; white-space: nowrap; gap: 10px;">
+                    <div class="card mb-2 shadow-sm" style="border-radius: 20px; height: 100%; display: flex; flex-direction: column;">
+                        <div class="card-body" style="position: relative; padding: 0;">
+                            <img class="card-img-overlay"
+                                 src="@Url.Content("~/Content/pic/category/" + loai.AnhBia)"
+                                 alt="@loai.TenLoai"
+                                 style="width: 260px; height: 260px; object-fit: cover; border-radius: 20px; position: absolute; filter: brightness(0.9); transition: transform 0.7s ease; z-index: 1;"
+                                 onmouseover="this.style.transform='scale(1.1)';"
+                                 onmouseout="this.style.transform='scale(1)';" />
+                            <h5 class="card-title" style="position: absolute; bottom: 10px; left: 10px; color: #fff; z-index: 1; white-space: nowrap;">@loai.TenLoai</h5>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <button id="prevButton" class="nav-button i-l" style="margin-left: -200px;"><i class="fa fa-chevron-left"></i></button>
+            <button id="nextButton" class="nav-button i-r" style="margin-right: -200px;"><i class="fa fa-chevron-right"></i></button>
+        </div>
+    </section>
+
+    <style>
+        .product-item {
+        white-space: nowrap;
+        margin: 5px;
+        width: 260px;
+        height: 260px;
+        background-color: transparent;
+        border-radius: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .card-body {
+        position: relative;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+    }
+
+    .card-img-overlay {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 20px;
+        position: absolute;
+        filter: brightness(0.9);
+        transition: transform 0.7s ease;
+        z-index: 1;
+    }
+
+    .card-title {
+        position: absolute;
+        bottom: 10px;
+        left: 10px;
+        color: #fff;
+        z-index: 2;
+        white-space: nowrap;
+    }
+
+    .row:hover .card-body {
+        transform: scale(1.15);
+    }
+
+    .container:hover .product-item:not(:hover) {
+        transform: scale(0.9);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .container:hover > .product-item:not(:hover) .card-body {
+        filter: brightness(0.5) saturate(0) contrast(1.2) blur(5px);
+    }
+
+    .card-img-overlay {
+        position: relative;
+        z-index: 1;
+    }
+
+    @@media (max-width: 768px) {
+        .product-item {
+            width: 100%;
+            height: auto;
+            margin: 5px;
+        }
+
+        .container {
+            flex-direction: column;
+        }
+    }
+
+    </style>
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            let currentIndex = 0;
+            const itemsToShow = 4;
+            const items = document.querySelectorAll('.product-item');
+            const totalItems = items.length;
+
+            // Check if the window is loaded
+            window.onload = function () {
+                console.log("Window loaded, setting opacity to 1...");
+                document.getElementById("productContainer").style.opacity = "1";
+            };
+
+            function showItems() {
+                items.forEach((item, index) => {
+                    item.style.display = (index >= currentIndex && index < currentIndex + itemsToShow) ? 'block' : 'none';
+                });
+            }
+
+            function showNextItems() {
+                if (currentIndex + itemsToShow < totalItems) {
+                    currentIndex += itemsToShow;
+                } else {
+                    currentIndex = 0; // Loop back to the start
+                }
+                showItems();
+            }
+
+            function showPreviousItems() {
+                if (currentIndex - itemsToShow >= 0) {
+                    currentIndex -= itemsToShow;
+                } else {
+                    // Go to the last full set if currentIndex is at the start
+                    currentIndex = Math.max(0, totalItems - itemsToShow);
+                }
+                showItems();
+            }
+
+            document.getElementById("prevButton").addEventListener("click", showPreviousItems);
+            document.getElementById("nextButton").addEventListener("click", showNextItems);
+
+            // Initial display of items
+            showItems();
+        });
+    </script>*@
+
